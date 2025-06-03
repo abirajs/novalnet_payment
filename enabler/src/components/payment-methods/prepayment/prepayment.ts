@@ -102,7 +102,9 @@ export class Prepayment extends BaseComponent {
 
   private _getTemplate() {
     return this.showPayButton
-      ? `<button class="${buttonStyles.button} ${buttonStyles.fullWidth} ${styles.submitButton}" id="purchaseOrderForm-paymentButton">Pay</button>`
+      ? ` <div class="${styles.wrapper}">
+      <button class="${buttonStyles.button} ${buttonStyles.fullWidth} ${styles.submitButton}" id="purchaseOrderForm-paymentButton">Pay</button>
+      </div>`
       : "";
   }
 
