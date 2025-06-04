@@ -86,7 +86,7 @@ try {
 
   console.log("requestData-triggered");
 
-  const response = await fetch("https://payport.novalnet.de/v2/payment", {
+  const response = await fetch(this.processorUrl + "/payments", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
