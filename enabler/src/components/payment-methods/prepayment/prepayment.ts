@@ -53,7 +53,7 @@ export class Prepayment extends BaseComponent {
   async submit() {
     // here we would call the SDK to submit the payment
     this.sdk.init({ environment: this.environment });
-console.log(submit-triggered);
+console.log("submit-triggered");
     const isFormValid = this.validateAllFields();
     if (!isFormValid) {
       return;
