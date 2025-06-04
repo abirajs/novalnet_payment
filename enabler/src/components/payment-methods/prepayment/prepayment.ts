@@ -53,7 +53,7 @@ export class Prepayment extends BaseComponent {
   async submit() {
     // here we would call the SDK to submit the payment
     this.sdk.init({ environment: this.environment });
-console.log("submit-triggered");
+    console.log("submit-triggered");
     const isFormValid = this.validateAllFields();
     if (!isFormValid) {
       return;
@@ -68,7 +68,7 @@ console.log("submit-triggered");
         },
         paymentOutcome: PaymentOutcome.AUTHORIZED,
       };
-
+      console.log("requestData-triggered");
       const response = await fetch(this.processorUrl + "/payments", {
         method: "POST",
         headers: {
@@ -77,7 +77,9 @@ console.log("submit-triggered");
         },
         body: JSON.stringify(requestData),
       });
+      console.log("response-triggered");
       const data = await response.json();
+      console.log("data-triggered");
       if (data.paymentReference) {
         this.onComplete &&
           this.onComplete({
@@ -101,14 +103,30 @@ console.log("submit-triggered");
   }
 
   private _getTemplate() {
-    return this.showPayButton
-      ? `
-      <div class="${styles.wrapper}">
-        <p>Pay easily with Purchase Order and transfer the shopping amount within the specified date.</p>
-        <button class="${buttonStyles.button} ${buttonStyles.fullWidth} ${styles.submitButton}" id="purchaseOrderForm-paymentButton">Pay</button>
-      </div>
-      `
+    const payButton = this.showPayButton
+      ? `<button class="${buttonStyles.button} ${buttonStyles.fullWidth} ${styles.submitButton}" id="purchaseOrderForm-paymentButton">Pay</button>`
       : "";
+    return `
+    <div class="${styles.wrapper}">
+      <form class="${styles.paymentForm}">
+        <div class="${inputFieldStyles.inputContainer}">
+          <label class="${inputFieldStyles.inputLabel}" for="purchaseOrderForm-poNumber">
+            PO Number <span aria-hidden="true"> *</span>
+          </label>
+          <input class="${inputFieldStyles.inputField}" type="text" id="purchaseOrderForm-poNumber" name="poNumber" value="">
+          <span class="${styles.hidden} ${inputFieldStyles.errorField}">Invalid PO number</span>
+        </div>
+        <div class="${inputFieldStyles.inputContainer}">
+          <label class="${inputFieldStyles.inputLabel}" for="purchaseOrderForm-invoiceMemo">
+            Invoice memo
+          </label>
+          <input class="${inputFieldStyles.inputField}" type="text" id="purchaseOrderForm-invoiceMemo" name="invoiceMemo" value="">
+          <span class="${styles.hidden} ${inputFieldStyles.errorField}">Invalid Invoice memo</span>
+        </div>
+        ${payButton}
+      </form>
+      </div>
+    `;
   }
 
   private addFormFieldsEventListeners = () => {
