@@ -53,7 +53,7 @@ export class Prepayment extends BaseComponent {
   async submit() {
     // here we would call the SDK to submit the payment
     this.sdk.init({ environment: this.environment });
-
+console.log(submit-triggered);
     const isFormValid = this.validateAllFields();
     if (!isFormValid) {
       return;
@@ -102,9 +102,12 @@ export class Prepayment extends BaseComponent {
 
   private _getTemplate() {
     return this.showPayButton
-      ? ` <div class="${styles.wrapper}">
-      <button class="${buttonStyles.button} ${buttonStyles.fullWidth} ${styles.submitButton}" id="purchaseOrderForm-paymentButton">Pay</button>
-      </div>`
+      ? `
+      <div class="${styles.wrapper}">
+        <p>Pay easily with Purchase Order and transfer the shopping amount within the specified date.</p>
+        <button class="${buttonStyles.button} ${buttonStyles.fullWidth} ${styles.submitButton}" id="purchaseOrderForm-paymentButton">Pay</button>
+      </div>
+      `
       : "";
   }
 
