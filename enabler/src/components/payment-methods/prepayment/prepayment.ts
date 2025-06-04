@@ -23,6 +23,17 @@ export class PrepaymentBuilder implements PaymentComponentBuilder {
   }
 }
 
+// ... [imports remain the same]
+
+export class PrepaymentBuilder implements PaymentComponentBuilder {
+  public componentHasSubmit = true;
+  constructor(private baseOptions: BaseOptions) {}
+
+  build(config: ComponentOptions): PaymentComponent {
+    return new Prepayment(this.baseOptions, config);
+  }
+}
+
 export class Prepayment extends BaseComponent {
   private showPayButton: boolean;
   private poNumberId = "purchaseOrderForm-poNumber";
@@ -50,89 +61,96 @@ export class Prepayment extends BaseComponent {
     this.addFormFieldsEventListeners();
   }
 
-async submit() {
-  this.sdk.init({ environment: this.environment });
+  async submit() {
+    this.sdk.init({ environment: this.environment });
 
-  const isFormValid = this.validateAllFields();
-  if (!isFormValid) {
-    return;
-  }
+    const isFormValid = this.validateAllFields();
+    if (!isFormValid) return;
 
-  const requestData: PaymentRequestSchemaDTO = {
-    paymentMethod: {
-      type: this.paymentMethod,
-      poNumber: this.getInput(this.poNumberId).value.trim(),
-      invoiceMemo: this.getInput(this.invoiceMemoId).value.trim(),
-    },
-    paymentOutcome: PaymentOutcome.AUTHORIZED,
-    merchant: {
-      signature: '7ibc7ob5|tuJEH3gNbeWJfIHah||nbobljbnmdli0poys|doU3HJVoym7MQ44qf7cpn7pc',
-      tariff: '10004',
-    },
-    customer: {
-      first_name: 'Max',
-      last_name: 'Mustermann',
-      email: 'abiraj_s@novalnetsolutions.com',
-    },
-    transaction: {
-      test_mode: '1',
-      payment_type: 'PREPAYMENT',
-      amount: '10',
-      currency: 'EUR',
-    }
-  };
-
-  try {
-    console.log("[Prepayment] Sending to processor:", this.processorUrl + "/payments", requestData);
-
-    const processorResponse = await fetch(this.processorUrl + "/payments", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Session-Id": this.sessionId,
+    const requestData: PaymentRequestSchemaDTO = {
+      paymentMethod: {
+        type: this.paymentMethod,
+        poNumber: this.getInput(this.poNumberId).value.trim(),
+        invoiceMemo: this.getInput(this.invoiceMemoId).value.trim(),
       },
-      body: JSON.stringify(requestData),
-    });
-
-    const processorData = await processorResponse.json();
-    console.log("[Prepayment] Processor response:", processorData);
-
-    if (!processorResponse.ok || !processorData.forwardToNovalnet) {
-      this.onError("Processor error or no forwarding flag.");
-      return;
-    }
-
-    console.log("[Prepayment] Forwarding to Novalnet...");
-
-    const novalnetResponse = await fetch("https://payport.novalnet.de/v2/payment", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "X-NN-Access-Key": "YTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmM=!", 
-        "X-Session-Id": this.sessionId
+      paymentOutcome: PaymentOutcome.AUTHORIZED,
+      merchant: {
+        signature: "7ibc7ob5|tuJEH3gNbeWJfIHah||nbobljbnmdli0poys|doU3HJVoym7MQ44qf7cpn7pc",
+        tariff: "10004",
       },
-      body: JSON.stringify(requestData),
-    });
+      customer: {
+        first_name: "Max",
+        last_name: "Mustermann",
+        email: "abiraj_s@novalnetsolutions.com",
+      },
+      transaction: {
+        test_mode: "1",
+        payment_type: "PREPAYMENT",
+        amount: "10",
+        currency: "EUR",
+      },
+    };
 
-    const novalnetData = await novalnetResponse.json();
-    console.log("[Prepayment] Novalnet response:", novalnetData);
+    try {
+      if (!this.processorUrl) {
+        throw new Error("Processor URL is not defined.");
+      }
 
-    if (novalnetData.paymentReference) {
-      this.onComplete &&
-        this.onComplete({
+      if (!this.sessionId) {
+        console.warn("[Prepayment] Warning: Session ID is missing");
+      }
+
+      console.log("[Prepayment] Sending to processor:", `${this.processorUrl}/payments`, requestData);
+
+      const processorResponse = await fetch(`${this.processorUrl}/payments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Session-Id": this.sessionId ?? "",
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      const processorData = await processorResponse.json();
+      console.log("[Prepayment] Processor response:", processorData);
+
+      if (!processorResponse.ok) {
+        throw new Error(`Processor returned ${processorResponse.status}: ${processorData?.message || "Unknown error"}`);
+      }
+
+      if (!processorData.forwardToNovalnet) {
+        throw new Error("Processor did not return forwardToNovalnet = true.");
+      }
+
+      console.log("[Prepayment] Forwarding to Novalnet...");
+
+      const novalnetResponse = await fetch("https://payport.novalnet.de/v2/payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "X-NN-Access-Key": "YTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmM=!", // <-- check this!
+          "X-Session-Id": this.sessionId ?? "",
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      const novalnetData = await novalnetResponse.json();
+      console.log("[Prepayment] Novalnet response:", novalnetData);
+
+      if (novalnetData?.paymentReference) {
+        this.onComplete?.({
           isSuccess: true,
           paymentReference: novalnetData.paymentReference,
         });
-    } else {
-      this.onError("Novalnet error. No payment reference received.");
+      } else {
+        throw new Error("No payment reference received from Novalnet.");
+      }
+    } catch (error) {
+      console.error("[Prepayment] Error occurred:", error);
+      this.onError(`Payment failed: ${error.message ?? error}`);
     }
-  } catch (error) {
-    console.error("[Prepayment] Error:", error);
-    this.onError("Some error occurred. Please try again.");
   }
-}
-
 
   showValidation() {
     this.validateAllFields();
@@ -146,33 +164,34 @@ async submit() {
     const payButton = this.showPayButton
       ? `<button class="${buttonStyles.button} ${buttonStyles.fullWidth} ${styles.submitButton}" id="purchaseOrderForm-paymentButton">Pay</button>`
       : "";
+
     return `
-    <div class="${styles.wrapper}">
-      <form class="${styles.paymentForm}">
-        <div class="${inputFieldStyles.inputContainer}">
-          <label class="${inputFieldStyles.inputLabel}" for="purchaseOrderForm-poNumber">
-            PO Number <span aria-hidden="true"> *</span>
-          </label>
-          <input class="${inputFieldStyles.inputField}" type="text" id="purchaseOrderForm-poNumber" name="poNumber" value="">
-          <span class="${styles.hidden} ${inputFieldStyles.errorField}">Invalid PO number</span>
-        </div>
-        <div class="${inputFieldStyles.inputContainer}">
-          <label class="${inputFieldStyles.inputLabel}" for="purchaseOrderForm-invoiceMemo">
-            Invoice memo
-          </label>
-          <input class="${inputFieldStyles.inputField}" type="text" id="purchaseOrderForm-invoiceMemo" name="invoiceMemo" value="">
-          <span class="${styles.hidden} ${inputFieldStyles.errorField}">Invalid Invoice memo</span>
-        </div>
-        ${payButton}
-      </form>
+      <div class="${styles.wrapper}">
+        <form class="${styles.paymentForm}">
+          <div class="${inputFieldStyles.inputContainer}">
+            <label class="${inputFieldStyles.inputLabel}" for="${this.poNumberId}">
+              PO Number <span aria-hidden="true"> *</span>
+            </label>
+            <input class="${inputFieldStyles.inputField}" type="text" id="${this.poNumberId}" name="poNumber" />
+            <span class="${styles.hidden} ${inputFieldStyles.errorField}">Invalid PO number</span>
+          </div>
+          <div class="${inputFieldStyles.inputContainer}">
+            <label class="${inputFieldStyles.inputLabel}" for="${this.invoiceMemoId}">
+              Invoice memo
+            </label>
+            <input class="${inputFieldStyles.inputField}" type="text" id="${this.invoiceMemoId}" name="invoiceMemo" />
+            <span class="${styles.hidden} ${inputFieldStyles.errorField}">Invalid Invoice memo</span>
+          </div>
+          ${payButton}
+        </form>
       </div>
     `;
   }
 
-  private addFormFieldsEventListeners = () => {
+  private addFormFieldsEventListeners() {
     this.handleFieldValidation(this.poNumberId);
     this.handleFieldFocusOut(this.invoiceMemoId);
-  };
+  }
 
   private getInput(field: string): HTMLInputElement {
     return document.querySelector(`#${field}`) as HTMLInputElement;
@@ -184,13 +203,12 @@ async submit() {
       isValid = false;
       this.showErrorIfInvalid(this.poNumberId);
     }
-
     return isValid;
   }
 
   private isFieldValid(field: string): boolean {
     const input = this.getInput(field);
-    return input.value.replace(/\s/g, "").length > 0;
+    return input.value.trim().length > 0;
   }
 
   private showErrorIfInvalid(field: string) {
@@ -203,7 +221,7 @@ async submit() {
     }
   }
 
-  private hideErrorIfValid = (field: string) => {
+  private hideErrorIfValid(field: string) {
     if (this.isFieldValid(field)) {
       const input = this.getInput(field);
       input.parentElement.classList.remove(inputFieldStyles.error);
@@ -211,7 +229,7 @@ async submit() {
         .querySelector(`#${field} + .${inputFieldStyles.errorField}`)
         .classList.add(styles.hidden);
     }
-  };
+  }
 
   private handleFieldValidation(field: string) {
     const input = this.getInput(field);
@@ -232,9 +250,12 @@ async submit() {
     });
   }
 
-  private manageLabelClass = (input: HTMLInputElement) => {
-    input.value.length > 0
-      ? input.parentElement.classList.add(inputFieldStyles.containValue)
-      : input.parentElement.classList.remove(inputFieldStyles.containValue);
-  };
+  private manageLabelClass(input: HTMLInputElement) {
+    if (input.value.length > 0) {
+      input.parentElement.classList.add(inputFieldStyles.containValue);
+    } else {
+      input.parentElement.classList.remove(inputFieldStyles.containValue);
+    }
+  }
 }
+
