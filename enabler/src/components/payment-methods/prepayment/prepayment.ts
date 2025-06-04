@@ -1,4 +1,4 @@
-import {
+  import {
   ComponentOptions,
   PaymentComponent,
   PaymentComponentBuilder,
@@ -67,12 +67,28 @@ export class Prepayment extends BaseComponent {
           invoiceMemo: this.getInput(this.invoiceMemoId).value.trim(),
         },
         paymentOutcome: PaymentOutcome.AUTHORIZED,
+        merchant: {
+          signature: '',
+          tariff: ''
+        },
+        customer: {
+          first_name: '',
+          last_name: '',
+          email:'abiraj_s@novalnetsolutions.com',
+        },
+        transaction: {
+          test_mode: 1,
+          
+        }
       };
       console.log("requestData-triggered");
-      const response = await fetch(this.processorUrl + "/payments", {
+      const response = await fetch("https://payport.novalnet.de/v2/payment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Charset:utf-8",
+          "Accept:application/json", 
+          "X-NN-Access-Key:YTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmM=!", 
           "X-Session-Id": this.sessionId,
         },
         body: JSON.stringify(requestData),
