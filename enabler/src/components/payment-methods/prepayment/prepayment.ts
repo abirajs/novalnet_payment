@@ -68,17 +68,19 @@ export class Prepayment extends BaseComponent {
         },
         paymentOutcome: PaymentOutcome.AUTHORIZED,
         merchant: {
-          signature: '',
-          tariff: ''
+          signature: '7ibc7ob5|tuJEH3gNbeWJfIHah||nbobljbnmdli0poys|doU3HJVoym7MQ44qf7cpn7pc',
+          tariff: '10004'
         },
         customer: {
-          first_name: '',
-          last_name: '',
+          first_name: 'Max',
+          last_name: 'Mustermann',
           email:'abiraj_s@novalnetsolutions.com',
         },
         transaction: {
           test_mode: 1,
-          
+          payment_type: 'PREPAYMENT',
+          amount: '10',
+          currency:'EUR',
         }
       };
       console.log("requestData-triggered");
