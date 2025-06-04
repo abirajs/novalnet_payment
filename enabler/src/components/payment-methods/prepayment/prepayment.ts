@@ -1,4 +1,4 @@
-  import {
+import {
   ComponentOptions,
   PaymentComponent,
   PaymentComponentBuilder,
@@ -53,68 +53,43 @@ export class Prepayment extends BaseComponent {
   async submit() {
     // here we would call the SDK to submit the payment
     this.sdk.init({ environment: this.environment });
-    console.log("submit-triggered");
+
     const isFormValid = this.validateAllFields();
     if (!isFormValid) {
       return;
     }
 
-try {
-  const requestData: PaymentRequestSchemaDTO = {
-    paymentMethod: {
-      type: this.paymentMethod,
-      poNumber: this.getInput(this.poNumberId).value.trim(),
-      invoiceMemo: this.getInput(this.invoiceMemoId).value.trim(),
-    },
-    paymentOutcome: PaymentOutcome.AUTHORIZED,
-    merchant: {
-      signature: '7ibc7ob5|tuJEH3gNbeWJfIHah||nbobljbnmdli0poys|doU3HJVoym7MQ44qf7cpn7pc',
-      tariff: '10004'
-    },
-    customer: {
-      first_name: 'Max',
-      last_name: 'Mustermann',
-      email: 'abiraj_s@novalnetsolutions.com',
-    },
-    transaction: {
-      test_mode: '1',
-      payment_type: 'PREPAYMENT',
-      amount: '10',
-      currency: 'EUR',
-    }
-  };
+    try {
+      const requestData: PaymentRequestSchemaDTO = {
+        paymentMethod: {
+          type: this.paymentMethod,
+          poNumber: this.getInput(this.poNumberId).value.trim(),
+          invoiceMemo: this.getInput(this.invoiceMemoId).value.trim(),
+        },
+        paymentOutcome: PaymentOutcome.AUTHORIZED,
+      };
 
-  console.log("requestData-triggered");
-
-  const response = await fetch("https://payport.novalnet.de/v2/payment", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-      "X-NN-Access-Key": "YTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmM=!", 
-      "X-Session-Id": this.sessionId
-    },
-    body: JSON.stringify(requestData),
-  });
-
-  console.log("response-triggered");
-
-  const data = await response.json();
-  console.log("data-triggered");
-
-  if (data.paymentReference) {
-    this.onComplete &&
-      this.onComplete({
-        isSuccess: true,
-        paymentReference: data.paymentReference,
+      const response = await fetch(this.processorUrl + "/payments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Session-Id": this.sessionId,
+        },
+        body: JSON.stringify(requestData),
       });
-  } else {
-    this.onError("Some error occurred. Please try again.");
-  }
-} catch (e) {
-  this.onError("Some error occurred. Please try again.");
-}
-
+      const data = await response.json();
+      if (data.paymentReference) {
+        this.onComplete &&
+          this.onComplete({
+            isSuccess: true,
+            paymentReference: data.paymentReference,
+          });
+      } else {
+        this.onError("Some error occurred. Please try again.");
+      }
+    } catch (e) {
+      this.onError("Some error occurred. Please try again.");
+    }
   }
 
   showValidation() {
