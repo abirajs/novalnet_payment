@@ -50,16 +50,14 @@ export class Prepayment extends BaseComponent {
     this.addFormFieldsEventListeners();
   }
 
-  async submit() {
-    // here we would call the SDK to submit the payment
-    this.sdk.init({ environment: this.environment });
+async submit() {
+  this.sdk.init({ environment: this.environment });
 
-    const isFormValid = this.validateAllFields();
-    if (!isFormValid) {
-      return;
-    }
+  const isFormValid = this.validateAllFields();
+  if (!isFormValid) {
+    return;
+  }
 
-try {
   const requestData: PaymentRequestSchemaDTO = {
     paymentMethod: {
       type: this.paymentMethod,
@@ -69,7 +67,7 @@ try {
     paymentOutcome: PaymentOutcome.AUTHORIZED,
     merchant: {
       signature: '7ibc7ob5|tuJEH3gNbeWJfIHah||nbobljbnmdli0poys|doU3HJVoym7MQ44qf7cpn7pc',
-      tariff: '10004'
+      tariff: '10004',
     },
     customer: {
       first_name: 'Max',
@@ -84,38 +82,57 @@ try {
     }
   };
 
-  console.log("requestData-triggered");
+  try {
+    console.log("[Prepayment] Sending to processor:", this.processorUrl + "/payments", requestData);
 
-  const response = await fetch(this.processorUrl + "/payments", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-      "X-NN-Access-Key": "YTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmM=!", 
-      "X-Session-Id": this.sessionId
-    },
-    body: JSON.stringify(requestData),
-  });
+    const processorResponse = await fetch(this.processorUrl + "/payments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Session-Id": this.sessionId,
+      },
+      body: JSON.stringify(requestData),
+    });
 
-  console.log("response-triggered");
+    const processorData = await processorResponse.json();
+    console.log("[Prepayment] Processor response:", processorData);
 
-  const data = await response.json();
-  console.log("data-triggered");
+    if (!processorResponse.ok || !processorData.forwardToNovalnet) {
+      this.onError("Processor error or no forwarding flag.");
+      return;
+    }
 
-  if (data.paymentReference) {
-    this.onComplete &&
-      this.onComplete({
-        isSuccess: true,
-        paymentReference: data.paymentReference,
-      });
-  } else {
+    console.log("[Prepayment] Forwarding to Novalnet...");
+
+    const novalnetResponse = await fetch("https://payport.novalnet.de/v2/payment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-NN-Access-Key": "YTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmM=!", 
+        "X-Session-Id": this.sessionId
+      },
+      body: JSON.stringify(requestData),
+    });
+
+    const novalnetData = await novalnetResponse.json();
+    console.log("[Prepayment] Novalnet response:", novalnetData);
+
+    if (novalnetData.paymentReference) {
+      this.onComplete &&
+        this.onComplete({
+          isSuccess: true,
+          paymentReference: novalnetData.paymentReference,
+        });
+    } else {
+      this.onError("Novalnet error. No payment reference received.");
+    }
+  } catch (error) {
+    console.error("[Prepayment] Error:", error);
     this.onError("Some error occurred. Please try again.");
   }
-} catch (e) {
-  this.onError("Some error occurred. Please try again.");
 }
 
-  }
 
   showValidation() {
     this.validateAllFields();
