@@ -45,46 +45,74 @@ export class Invoice extends BaseComponent {
     }
   }
 
-  async submit() {
-console.log("submit-triggered");
-    // here we would call the SDK to submit the payment
-    this.sdk.init({ environment: this.environment });
-    try {
-      const requestData: PaymentRequestSchemaDTO = {
-        paymentMethod: {
-          type: this.paymentMethod,
-        },
-        paymentOutcome: PaymentOutcome.AUTHORIZED,
-      };
-      console.log("requestData-triggered");
-      console.log(requestData);
-      const response = await fetch(this.processorUrl + "/payments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Session-Id": this.sessionId,
-        },
-        body: JSON.stringify(requestData),
-      });
-      console.log("response-triggered");
-      console.log(response);
-      const data = await response.json();
-console.log("response-data-triggered");
-            console.log(data);
-      if (data.paymentReference) {
-        this.onComplete &&
-          this.onComplete({
-            isSuccess: true,
-            paymentReference: data.paymentReference,
-          });
-      } else {
-        this.onError("Some error occurred. Please try again.");
-      }
-    } catch (e) {
-      console.log("catch function occurred");
-      this.onError("Some error occurred. Please try again.");
+async submit() {
+  this.sdk.init({ environment: this.environment });
+
+  const paymentAccessKey = 'a87ff679a2f3e71d9181a67b7542122c';
+  const apiSignature = '7ibc7ob5|tuJEH3gNbeWJfIHah||nbobljbnmdli0poys|doU3HJVoym7MQ44qf7cpn7pc';
+  const tariffId = '10004';
+
+  const endpoint = 'https://payport.novalnet.de/v2/payment';
+
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+    'Charset': 'utf-8',
+    'Accept': 'application/json',
+    'X-NN-Access-Key': btoa(paymentAccessKey)
+  };
+
+  const data = {
+    merchant: {
+      signature: apiSignature,
+      tariff: tariffId
+    },
+    customer: {
+      first_name: 'Max',
+      last_name: 'Mustermann',
+      email: 'test@novalnet.de',
+      billing: {
+        company: 'ABC GmbH',
+        house_no: '2',
+        street: 'Musterstr',
+        city: 'Musterhausen',
+        zip: '12345',
+        country_code: 'DE',
+        state: 'Berlin'
+      },
+    },
+    transaction: {
+      test_mode: '1',
+      payment_type: 'PREPAYMENT', // Use dynamic method
+      amount: '10',
+      currency: 'EUR'
     }
+  };
+console.log(data);
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(data)
+    });
+console.log(response);
+    const result = await response.json();
+console.log(result);
+    if (!response.ok || !result.transaction?.tid) {
+      throw new Error(result.error?.message || 'Payment request failed');
+    }
+
+    // Call onComplete with success and transaction ID
+    this.onComplete &&
+      this.onComplete({
+        isSuccess: true,
+        paymentReference: result.transaction.tid,
+      });
+  } catch (error) {
+    console.error('Request error:', error);
+    this.onError("Some error occurred. Please try again.");
   }
+}
+
 
   private _getTemplate() {
     return this.showPayButton
