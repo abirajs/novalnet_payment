@@ -57,6 +57,7 @@ console.log("submit-triggered");
         paymentOutcome: PaymentOutcome.AUTHORIZED,
       };
       console.log("requestData-triggered");
+      console.log(requestData);
       const response = await fetch(this.processorUrl + "/payments", {
         method: "POST",
         headers: {
@@ -66,8 +67,10 @@ console.log("submit-triggered");
         body: JSON.stringify(requestData),
       });
       console.log("response-triggered");
+      console.log(response);
       const data = await response.json();
 console.log("response-data-triggered");
+            console.log(data);
       if (data.paymentReference) {
         this.onComplete &&
           this.onComplete({
