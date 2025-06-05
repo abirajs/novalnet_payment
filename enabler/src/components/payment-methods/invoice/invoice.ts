@@ -45,10 +45,12 @@ export class Invoice extends BaseComponent {
     }
   }
 
-async submit() {
-  this.sdk.init({ environment: this.environment });
-
-  const paymentAccessKey = 'a87ff679a2f3e71d9181a67b7542122c';
+  async submit() {
+console.log("submit-triggered");
+    // here we would call the SDK to submit the payment
+    this.sdk.init({ environment: this.environment });
+    
+      const paymentAccessKey = 'a87ff679a2f3e71d9181a67b7542122c';
   const apiSignature = '7ibc7ob5|tuJEH3gNbeWJfIHah||nbobljbnmdli0poys|doU3HJVoym7MQ44qf7cpn7pc';
   const tariffId = '10004';
 
@@ -87,32 +89,55 @@ async submit() {
       currency: 'EUR'
     }
   };
-console.log(data);
-  try {
-    const response = await fetch(endpoint, {
+	console.log(data);
+    
+    
+    try {
+
+      const response = await fetch(endpoint, {
       method: 'POST',
       headers,
       body: JSON.stringify(data)
     });
-console.log(response);
-    const result = await response.json();
-console.log(result);
-    if (!response.ok || !result.transaction?.tid) {
-      throw new Error(result.error?.message || 'Payment request failed');
-    }
-
-    // Call onComplete with success and transaction ID
-    this.onComplete &&
-      this.onComplete({
-        isSuccess: true,
-        paymentReference: result.transaction.tid,
+	console.log(response);
+		const result = await response.json();
+	console.log(result);
+      
+      const requestData: PaymentRequestSchemaDTO = {
+        paymentMethod: {
+          type: this.paymentMethod,
+        },
+        paymentOutcome: PaymentOutcome.AUTHORIZED,
+      };
+      console.log("requestData-triggered");
+      console.log(requestData);
+      const response = await fetch(this.processorUrl + "/payments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Session-Id": this.sessionId,
+        },
+        body: JSON.stringify(requestData),
       });
-  } catch (error) {
-    console.error('Request error:', error);
-    this.onError("Some error occurred. Please try again.");
+      console.log("response-triggered");
+      console.log(response);
+      const data = await response.json();
+console.log("response-data-triggered");
+            console.log(data);
+      if (data.paymentReference) {
+        this.onComplete &&
+          this.onComplete({
+            isSuccess: true,
+            paymentReference: data.paymentReference,
+          });
+      } else {
+        this.onError("Some error occurred. Please try again.");
+      }
+    } catch (e) {
+      console.log("catch function occurred");
+      this.onError("Some error occurred. Please try again.");
+    }
   }
-}
-
 
   private _getTemplate() {
     return this.showPayButton
