@@ -58,7 +58,6 @@ console.log("variables-triggered");
     'Content-Type': 'application/json',
     'Charset': 'utf-8',
     'Accept': 'application/json',
-    'X-NN-Access-Key': 'YTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmM=!',
   };
 console.log("headers-triggered");
 
