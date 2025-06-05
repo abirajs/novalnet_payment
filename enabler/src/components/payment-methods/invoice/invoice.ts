@@ -81,6 +81,7 @@ console.log("response-data-triggered");
         this.onError("Some error occurred. Please try again.");
       }
     } catch (e) {
+      console.log("catch function occurred");
       this.onError("Some error occurred. Please try again.");
     }
   }
