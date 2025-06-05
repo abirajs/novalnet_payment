@@ -53,13 +53,12 @@ async submit() {
   const apiSignature = '7ibc7ob5|tuJEH3gNbeWJfIHah||nbobljbnmdli0poys|doU3HJVoym7MQ44qf7cpn7pc';
   const tariffId = '10004';
   const endpoint = 'https://payport.novalnet.de/v2/payment';
-  const encodedAccessKey = Buffer.from(paymentAccessKey).toString('base64');
 console.log("variables-triggered");
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
     'Charset': 'utf-8',
     'Accept': 'application/json',
-    'X-NN-Access-Key': encodedAccessKey
+    'X-NN-Access-Key': 'YTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmM=!'
   };
 console.log("headers-triggered");
 
