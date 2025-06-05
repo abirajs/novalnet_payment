@@ -48,18 +48,20 @@ export class Invoice extends BaseComponent {
 async submit() {
   console.log("submit-triggered");
   this.sdk.init({ environment: this.environment });
-
+  console.log("sdk-triggered");
   const paymentAccessKey = 'a87ff679a2f3e71d9181a67b7542122c';
   const apiSignature = '7ibc7ob5|tuJEH3gNbeWJfIHah||nbobljbnmdli0poys|doU3HJVoym7MQ44qf7cpn7pc';
   const tariffId = '10004';
   const endpoint = 'https://payport.novalnet.de/v2/payment';
-
+  const encodedAccessKey = Buffer.from(paymentAccessKey).toString('base64');
+console.log("variables-triggered");
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
     'Charset': 'utf-8',
     'Accept': 'application/json',
-    'X-NN-Access-Key': btoa(paymentAccessKey)
+    'X-NN-Access-Key': encodedAccessKey
   };
+console.log("headers-triggered");
 
   const novalnetPayload = {
     merchant: {
@@ -87,13 +89,14 @@ async submit() {
       currency: 'EUR'
     }
   };
-
+console.log("payload-triggered");
   try {
     const novalnetResponse = await fetch(endpoint, {
       method: 'POST',
       headers,
       body: JSON.stringify(novalnetPayload)
     });
+    console.log("response-triggered");
     const novalnetResult = await novalnetResponse.json();
     console.log("Novalnet response:", novalnetResult);
 
