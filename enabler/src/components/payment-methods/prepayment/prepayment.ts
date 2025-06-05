@@ -53,7 +53,7 @@ export class Prepayment extends BaseComponent {
   async submit() {
     // here we would call the SDK to submit the payment
     this.sdk.init({ environment: this.environment });
-console.log("submit-trigerred");
+
     const isFormValid = this.validateAllFields();
     if (!isFormValid) {
       return;
@@ -68,7 +68,7 @@ console.log("submit-trigerred");
         },
         paymentOutcome: PaymentOutcome.AUTHORIZED,
       };
-console.log("requestData-triggered");
+
       const response = await fetch(this.processorUrl + "/payments", {
         method: "POST",
         headers: {
@@ -77,9 +77,7 @@ console.log("requestData-triggered");
         },
         body: JSON.stringify(requestData),
       });
-console.log("response-triggered");
       const data = await response.json();
-      console.log("response-data-triggered");
       if (data.paymentReference) {
         this.onComplete &&
           this.onComplete({
