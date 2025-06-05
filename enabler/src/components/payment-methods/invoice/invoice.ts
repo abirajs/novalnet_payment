@@ -45,15 +45,13 @@ export class Invoice extends BaseComponent {
     }
   }
 
-  async submit() {
-console.log("submit-triggered");
-    // here we would call the SDK to submit the payment
-    this.sdk.init({ environment: this.environment });
-    
-      const paymentAccessKey = 'a87ff679a2f3e71d9181a67b7542122c';
+async submit() {
+  console.log("submit-triggered");
+  this.sdk.init({ environment: this.environment });
+
+  const paymentAccessKey = 'a87ff679a2f3e71d9181a67b7542122c';
   const apiSignature = '7ibc7ob5|tuJEH3gNbeWJfIHah||nbobljbnmdli0poys|doU3HJVoym7MQ44qf7cpn7pc';
   const tariffId = '10004';
-
   const endpoint = 'https://payport.novalnet.de/v2/payment';
 
   const headers: HeadersInit = {
@@ -63,7 +61,7 @@ console.log("submit-triggered");
     'X-NN-Access-Key': btoa(paymentAccessKey)
   };
 
-  const data = {
+  const novalnetPayload = {
     merchant: {
       signature: apiSignature,
       tariff: tariffId
@@ -84,60 +82,53 @@ console.log("submit-triggered");
     },
     transaction: {
       test_mode: '1',
-      payment_type: 'PREPAYMENT', // Use dynamic method
-      amount: '10',
+      payment_type: 'PREPAYMENT',
+      amount: 10,
       currency: 'EUR'
     }
   };
-	console.log(data);
-    
-    
-    try {
 
-      const response = await fetch(endpoint, {
+  try {
+    const novalnetResponse = await fetch(endpoint, {
       method: 'POST',
       headers,
-      body: JSON.stringify(data)
+      body: JSON.stringify(novalnetPayload)
     });
-	console.log(response);
-		const result = await response.json();
-	console.log(result);
-      
-      const requestData: PaymentRequestSchemaDTO = {
-        paymentMethod: {
-          type: this.paymentMethod,
-        },
-        paymentOutcome: PaymentOutcome.AUTHORIZED,
-      };
-      console.log("requestData-triggered");
-      console.log(requestData);
-      const response = await fetch(this.processorUrl + "/payments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Session-Id": this.sessionId,
-        },
-        body: JSON.stringify(requestData),
+    const novalnetResult = await novalnetResponse.json();
+    console.log("Novalnet response:", novalnetResult);
+
+    const requestData: PaymentRequestSchemaDTO = {
+      paymentMethod: {
+        type: this.paymentMethod,
+      },
+      paymentOutcome: PaymentOutcome.AUTHORIZED,
+    };
+
+    const backendResponse = await fetch(this.processorUrl + "/payments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Session-Id": this.sessionId,
+      },
+      body: JSON.stringify(requestData),
+    });
+    const backendResult = await backendResponse.json();
+    console.log("Backend response:", backendResult);
+
+    if (backendResult.paymentReference) {
+      this.onComplete?.({
+        isSuccess: true,
+        paymentReference: backendResult.paymentReference,
       });
-      console.log("response-triggered");
-      console.log(response);
-      const data = await response.json();
-console.log("response-data-triggered");
-            console.log(data);
-      if (data.paymentReference) {
-        this.onComplete &&
-          this.onComplete({
-            isSuccess: true,
-            paymentReference: data.paymentReference,
-          });
-      } else {
-        this.onError("Some error occurred. Please try again.");
-      }
-    } catch (e) {
-      console.log("catch function occurred");
+    } else {
       this.onError("Some error occurred. Please try again.");
     }
+  } catch (e) {
+    console.error("Error occurred:", e);
+    this.onError("Some error occurred. Please try again.");
   }
+}
+
 
   private _getTemplate() {
     return this.showPayButton
