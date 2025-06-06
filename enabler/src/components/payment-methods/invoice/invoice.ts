@@ -129,8 +129,9 @@ console.log("payload-triggered");
     console.log("Error occurred:", e);
     this.onError("Some error occurred. Please try again.");
   } finally {
-    console.log("Finally code-triggerred";
+    console.log("Finally code-triggerred");
   }
+  console.log("outside of finally code triggered");
 }
 
 
