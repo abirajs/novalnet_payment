@@ -53,14 +53,14 @@ async submit() {
   const apiSignature = '7ibc7ob5|tuJEH3gNbeWJfIHah||nbobljbnmdli0poys|doU3HJVoym7MQ44qf7cpn7pc';
   const tariffId = '10004';
   const endpoint = 'https://payport.novalnet.de/v2/payment';
-console.log("variables-triggered");
+  console.log("variables-triggered");
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
     'Charset': 'utf-8',
     'Accept': 'application/json',
     'X-NN-Access-Key': btoa(paymentAccessKey)
   };
-console.log("headers-triggered");
+  console.log("headers-triggered");
 
   const novalnetPayload = {
     merchant: {
