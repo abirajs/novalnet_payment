@@ -97,6 +97,7 @@ console.log("payload-triggered");
       body: JSON.stringify(novalnetPayload)
     });
     console.log("response-triggered");
+    console.log(novalnetResponse);
     const novalnetResult = await novalnetResponse.json();
     console.log("Novalnet response:", novalnetResult);
 
