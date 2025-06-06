@@ -126,8 +126,10 @@ console.log("payload-triggered");
       this.onError("Some error occurred. Please try again.");
     }
   } catch (e) {
-    console.error("Error occurred:", e);
+    console.log("Error occurred:", e);
     this.onError("Some error occurred. Please try again.");
+  } finally {
+    console.log("Finally code-triggerred";
   }
 }
 
