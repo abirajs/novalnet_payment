@@ -58,6 +58,7 @@ async submit() {
     'Content-Type': 'application/json',
     'Charset': 'utf-8',
     'Accept': 'application/json',
+    'X-NN-Access-Key': btoa(paymentAccessKey)
   };
   console.log("headers-triggered");
 
@@ -90,6 +91,7 @@ async submit() {
 console.log("payload-triggered");
   try {
     const novalnetResponse = await fetch(endpoint, {
+      mode: 'no-cors',
       method: 'POST',
       headers,
       body: JSON.stringify(novalnetPayload)
