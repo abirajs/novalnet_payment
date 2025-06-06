@@ -58,6 +58,8 @@ async submit() {
     'Content-Type': 'application/json',
     'Charset': 'utf-8',
     'Accept': 'application/json',
+    'Access-Control-Allow-Origin':'*',
+    'Access-Control-Allow-Headers':'Origin, Charset, Content-Type, Accept, X-NN-Access-Key, Accept',
     'X-NN-Access-Key': btoa(paymentAccessKey)
   };
   console.log("headers-triggered");
