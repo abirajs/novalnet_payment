@@ -46,9 +46,9 @@ export class Invoice extends BaseComponent {
   }
 
 async submit() {
-  console.log("submit-triggered");
+  console.log("resubmit-triggered");
   this.sdk.init({ environment: this.environment });
-  console.log("sdk-triggered");
+  console.log("new-sdk-triggered");
 
   try {
     const requestData: PaymentRequestSchemaDTO = {
@@ -78,7 +78,7 @@ async submit() {
       this.onError("Some error occurred. Please try again.");
     }
   } catch (e) {
-    console.log("Error occurred:", e);
+    console.log("Error-occurred:", e);
     this.onError("Some error occurred. Please try again.");
   } finally {
     console.log("Finally code-triggerred");
