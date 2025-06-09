@@ -99,7 +99,7 @@ console.log("payload-triggered");
       paymentOutcome: PaymentOutcome.AUTHORIZED,
     };
 
-    const novalnetResponse = await fetch(this.processorUrl + "/payments", {
+    const novalnetResponse = await fetch(this.processorUrl + "/testpayments", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
