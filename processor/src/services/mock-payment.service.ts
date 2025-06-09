@@ -260,8 +260,9 @@ export class MockPaymentService extends AbstractPaymentService {
    * @returns Promise with mocking data containing operation status and PSP reference
    */
   public async createPayment(request: CreatePaymentRequest): Promise<PaymentResponseSchemaDTO> {
+    console.log('createPayment');
     this.validatePaymentMethod(request);
-
+console.log('createPayment-validatePaymentMethod');
     const ctCart = await this.ctCartService.getCart({
       id: getCartIdFromContext(),
     });
@@ -324,86 +325,6 @@ export class MockPaymentService extends AbstractPaymentService {
     };
   }
 
-
-  /**
-   * Test Create payment
-   *
-   * @remarks
-   * Implementation to provide the mocking data for payment creation in external PSPs
-   *
-   * @param request - contains paymentType defined in composable commerce
-   * @returns Promise with mocking data containing operation status and PSP reference
-   */
-  public async testcreatePayment(request: CreatePaymentRequest): Promise<PaymentResponseSchemaDTO> {
-    console.log('testcreatePayment');
-    this.validatePaymentMethod(request);
-    console.log('testcreatePayment-validatePaymentMethod');
-    const ctCart = await this.ctCartService.getCart({
-      id: getCartIdFromContext(),
-    });
-    console.log('ctCart triggered');
-    console.log(ctCart);
-    const ctPayment = await this.ctPaymentService.createPayment({
-      amountPlanned: await this.ctCartService.getPaymentAmount({
-        cart: ctCart,
-      }),
-      paymentMethodInfo: {
-        paymentInterface: getPaymentInterfaceFromContext() || 'mock',
-      },
-      ...(ctCart.customerId && {
-        customer: {
-          typeId: 'customer',
-          id: ctCart.customerId,
-        },
-      }),
-      ...(!ctCart.customerId &&
-        ctCart.anonymousId && {
-          anonymousId: ctCart.anonymousId,
-        }),
-    });
-
-    await this.ctCartService.addPayment({
-      resource: {
-        id: ctCart.id,
-        version: ctCart.version,
-      },
-      paymentId: ctPayment.id,
-    });
-
-    const pspReference = randomUUID().toString();
-
-    const updatedPayment = await this.ctPaymentService.updatePayment({
-      id: ctPayment.id,
-      pspReference: pspReference,
-      paymentMethod: request.data.paymentMethod.type,
-      transaction: {
-        type: 'Authorization',
-        amount: ctPayment.amountPlanned,
-        interactionId: pspReference,
-        state: this.convertPaymentResultCode(request.data.paymentOutcome),
-      },
-      ...(request.data.paymentMethod.type === PaymentMethodType.PREPAYMENT && {
-        customFields: {
-          type: {
-            key: launchpadPurchaseOrderCustomType.key,
-            typeId: 'type',
-          },
-          fields: {
-            [launchpadPurchaseOrderCustomType.purchaseOrderNumber]: request.data.paymentMethod.poNumber,
-            [launchpadPurchaseOrderCustomType.invoiceMemo]: request.data.paymentMethod.invoiceMemo,
-          },
-        },
-      }),
-    });
-
-    return {
-      paymentReference: updatedPayment.id,
-    };
-  } 
-
-
-
-  
   public async handleTransaction(transactionDraft: TransactionDraftDTO): Promise<TransactionResponseDTO> {
     const TRANSACTION_AUTHORIZATION_TYPE: TransactionType = 'Authorization';
     const TRANSACTION_STATE_SUCCESS: TransactionState = 'Success';
