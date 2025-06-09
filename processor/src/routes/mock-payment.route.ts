@@ -14,7 +14,6 @@ type PaymentRoutesOptions = {
 };
 
 export const paymentRoutes = async (fastify: FastifyInstance, opts: FastifyPluginOptions & PaymentRoutesOptions) => {
-    console.log('paymentRoute-triggered');
   fastify.post<{ Body: PaymentRequestSchemaDTO; Reply: PaymentResponseSchemaDTO }>(
     '/payments',
     {
