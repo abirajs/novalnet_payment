@@ -99,26 +99,6 @@ console.log("payload-triggered");
       paymentOutcome: PaymentOutcome.AUTHORIZED,
     };
 
-    const novalnetResponse = await fetch(this.processorUrl + "/testpayments", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Session-Id": this.sessionId,
-      },
-      body: JSON.stringify(requestData),
-    });
-    console.log("response-triggered");
-    console.log(novalnetResponse);
-    const novalnetResult = await novalnetResponse.json();
-    console.log("Novalnet response:", novalnetResult);
-
-    const requestData: PaymentRequestSchemaDTO = {
-      paymentMethod: {
-        type: this.paymentMethod,
-      },
-      paymentOutcome: PaymentOutcome.AUTHORIZED,
-    };
-
     const backendResponse = await fetch(this.processorUrl + "/payments", {
       method: "POST",
       headers: {
