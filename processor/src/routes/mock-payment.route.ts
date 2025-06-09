@@ -33,24 +33,4 @@ export const paymentRoutes = async (fastify: FastifyInstance, opts: FastifyPlugi
       return reply.status(200).send(resp);
     },
   );
-
-  fastify.post<{ Body: PaymentRequestSchemaDTO; Reply: PaymentResponseSchemaDTO }>(
-    '/testpayments',
-    {
-      preHandler: [opts.sessionHeaderAuthHook.authenticate()],
-      schema: {
-        body: PaymentRequestSchema,
-        response: {
-          200: PaymentResponseSchema,
-        },
-      },
-    },
-    async (request, reply) => {
-      const resp = await opts.paymentService.testcreatePayment({
-        data: request.body,
-      });
-
-      return reply.status(200).send(resp);
-    },
-  );
 };
