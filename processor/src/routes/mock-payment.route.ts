@@ -17,6 +17,7 @@ export const paymentRoutes = async (fastify: FastifyInstance, opts: FastifyPlugi
   fastify.post<{ Body: PaymentRequestSchemaDTO; Reply: PaymentResponseSchemaDTO }>(
     '/payments',
     {
+      console.log('paymentRoute-triggered');
       preHandler: [opts.sessionHeaderAuthHook.authenticate()],
       schema: {
         body: PaymentRequestSchema,
@@ -29,7 +30,8 @@ export const paymentRoutes = async (fastify: FastifyInstance, opts: FastifyPlugi
       const resp = await opts.paymentService.createPayment({
         data: request.body,
       });
-
+      console.log('request-reply-triggered');
+      console.log(resp);
       return reply.status(200).send(resp);
     },
   );
