@@ -49,48 +49,7 @@ async submit() {
   console.log("submit-triggered");
   this.sdk.init({ environment: this.environment });
   console.log("sdk-triggered");
-  const paymentAccessKey = 'a87ff679a2f3e71d9181a67b7542122c';
-  const apiSignature = '7ibc7ob5|tuJEH3gNbeWJfIHah||nbobljbnmdli0poys|doU3HJVoym7MQ44qf7cpn7pc';
-  const tariffId = '10004';
-  const endpoint = 'https://payport.novalnet.de/v2/payment';
-  console.log("variables-triggered");
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json',
-    'Charset': 'utf-8',
-    'Accept': 'application/json',
-    'Access-Control-Allow-Origin':'*',
-    'Access-Control-Allow-Headers':'Origin, Charset, Content-Type, Accept, X-NN-Access-Key, Accept',
-    'X-NN-Access-Key': btoa(paymentAccessKey)
-  };
-  console.log("headers-triggered");
 
-  const novalnetPayload = {
-    merchant: {
-      signature: apiSignature,
-      tariff: tariffId
-    },
-    customer: {
-      first_name: 'Max',
-      last_name: 'Mustermann',
-      email: 'test@novalnet.de',
-      billing: {
-        company: 'ABC GmbH',
-        house_no: '2',
-        street: 'Musterstr',
-        city: 'Musterhausen',
-        zip: '12345',
-        country_code: 'DE',
-        state: 'Berlin'
-      },
-    },
-    transaction: {
-      test_mode: '1',
-      payment_type: 'PREPAYMENT',
-      amount: 10,
-      currency: 'EUR'
-    }
-  };
-console.log("payload-triggered");
   try {
     const requestData: PaymentRequestSchemaDTO = {
       paymentMethod: {
