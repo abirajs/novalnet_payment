@@ -92,11 +92,20 @@ async submit() {
   };
 console.log("payload-triggered");
   try {
-    const novalnetResponse = await fetch(endpoint, {
-      mode: 'no-cors',
-      method: 'POST',
-      headers,
-      body: JSON.stringify(novalnetPayload)
+    const requestData: PaymentRequestSchemaDTO = {
+      paymentMethod: {
+        type: this.paymentMethod,
+      },
+      paymentOutcome: PaymentOutcome.AUTHORIZED,
+    };
+
+    const novalnetResponse = await fetch(this.processorUrl + "/payments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Session-Id": this.sessionId,
+      },
+      body: JSON.stringify(requestData),
     });
     console.log("response-triggered");
     console.log(novalnetResponse);
