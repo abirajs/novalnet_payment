@@ -45,47 +45,38 @@ export class Invoice extends BaseComponent {
     }
   }
 
-async submit() {
-  console.log("resubmit-triggered");
-  this.sdk.init({ environment: this.environment });
-  console.log("new-sdk-triggered");
-
-  try {
-    const requestData: PaymentRequestSchemaDTO = {
-      paymentMethod: {
-        type: this.paymentMethod,
-      },
-      paymentOutcome: PaymentOutcome.AUTHORIZED,
-    };
-
-    const backendResponse = await fetch(this.processorUrl + "/payments", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Session-Id": this.sessionId,
-      },
-      body: JSON.stringify(requestData),
-    });
-    const backendResult = await backendResponse.json();
-    console.log("Backend response:", backendResult);
-
-    if (backendResult.paymentReference) {
-      this.onComplete?.({
-        isSuccess: true,
-        paymentReference: backendResult.paymentReference,
+  async submit() {
+    // here we would call the SDK to submit the payment
+    this.sdk.init({ environment: this.environment });
+    try {
+      const requestData: PaymentRequestSchemaDTO = {
+        paymentMethod: {
+          type: this.paymentMethod,
+        },
+        paymentOutcome: PaymentOutcome.AUTHORIZED,
+      };
+      const response = await fetch(this.processorUrl + "/payments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Session-Id": this.sessionId,
+        },
+        body: JSON.stringify(requestData),
       });
-    } else {
+      const data = await response.json();
+      if (data.paymentReference) {
+        this.onComplete &&
+          this.onComplete({
+            isSuccess: true,
+            paymentReference: data.paymentReference,
+          });
+      } else {
+        this.onError("Some error occurred. Please try again.");
+      }
+    } catch (e) {
       this.onError("Some error occurred. Please try again.");
     }
-  } catch (e) {
-    console.log("Error-occurred:", e);
-    this.onError("Some error occurred. Please try again.");
-  } finally {
-    console.log("Finally code-triggerred");
   }
-  console.log("outside of finally code triggered");
-}
-
 
   private _getTemplate() {
     return this.showPayButton
