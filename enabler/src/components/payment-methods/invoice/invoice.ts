@@ -55,6 +55,7 @@ export class Invoice extends BaseComponent {
         },
         paymentOutcome: PaymentOutcome.AUTHORIZED,
       };
+    console.log(requestData);
       const response = await fetch(this.processorUrl + "/payments", {
         method: "POST",
         headers: {
@@ -63,7 +64,9 @@ export class Invoice extends BaseComponent {
         },
         body: JSON.stringify(requestData),
       });
+      console.log(response);
       const data = await response.json();
+      console.log(data);
       if (data.paymentReference) {
         this.onComplete &&
           this.onComplete({
