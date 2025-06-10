@@ -19,7 +19,7 @@ export class AppLogger implements Logger {
 }
 
 export const appLogger = new AppLogger();
-
+console.log('paymentSDKfileCalled');
 export const paymentSDK = setupPaymentSDK({
   apiUrl: config.apiUrl,
   authUrl: config.authUrl,
