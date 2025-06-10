@@ -25,13 +25,11 @@ export const paymentRoutes = async (fastify: FastifyInstance, opts: FastifyPlugi
         },
       },
     },
-    console.log('paymentRoute-triggered-end');
     async (request, reply) => {
       const resp = await opts.paymentService.createPayment({
         data: request.body,
       });
-      console.log('request-reply-triggered');
-      console.log(resp);
+
       return reply.status(200).send(resp);
     },
   );
