@@ -25,7 +25,6 @@ export const paymentRoutes = async (fastify: FastifyInstance, opts: FastifyPlugi
         },
       },
     },
-     console.log('paymentRoutes-out');
     async (request, reply) => {
       const resp = await opts.paymentService.createPayment({
         data: request.body,
