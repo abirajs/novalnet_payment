@@ -127,10 +127,13 @@ export class MockPaymentService extends AbstractPaymentService {
           type: PaymentMethodType.CARD,
         },
         {
+          type: PaymentMethodType.CUSTOM_TEST_METHOD,
+        },
+        {
           type: PaymentMethodType.INVOICE,
         },
         {
-          type: PaymentMethodType.PREPAYMENT,
+          type: PaymentMethodType.PURCHASE_ORDER,
         },
       ],
     };
@@ -260,9 +263,8 @@ export class MockPaymentService extends AbstractPaymentService {
    * @returns Promise with mocking data containing operation status and PSP reference
    */
   public async createPayment(request: CreatePaymentRequest): Promise<PaymentResponseSchemaDTO> {
-    console.log('createPayment');
     this.validatePaymentMethod(request);
-console.log('createPayment-validatePaymentMethod');
+
     const ctCart = await this.ctCartService.getCart({
       id: getCartIdFromContext(),
     });
@@ -306,7 +308,7 @@ console.log('createPayment-validatePaymentMethod');
         interactionId: pspReference,
         state: this.convertPaymentResultCode(request.data.paymentOutcome),
       },
-      ...(request.data.paymentMethod.type === PaymentMethodType.PREPAYMENT && {
+      ...(request.data.paymentMethod.type === PaymentMethodType.PURCHASE_ORDER && {
         customFields: {
           type: {
             key: launchpadPurchaseOrderCustomType.key,
@@ -409,7 +411,7 @@ console.log('createPayment-validatePaymentMethod');
   private validatePaymentMethod(request: CreatePaymentRequest): void {
     const { paymentMethod } = request.data;
 
-    if (paymentMethod.type === PaymentMethodType.PREPAYMENT && !paymentMethod.poNumber) {
+    if (paymentMethod.type === PaymentMethodType.PURCHASE_ORDER && !paymentMethod.poNumber) {
       throw new ErrorRequiredField('poNumber');
     }
   }
