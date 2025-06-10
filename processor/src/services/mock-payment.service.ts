@@ -29,6 +29,7 @@ import { getCartIdFromContext, getPaymentInterfaceFromContext } from '../libs/fa
 import { randomUUID } from 'crypto';
 import { launchpadPurchaseOrderCustomType } from '../custom-types/custom-types';
 import { TransactionDraftDTO, TransactionResponseDTO } from '../dtos/operations/transaction.dto';
+import { log } from '../libs/logger';
 
 export class MockPaymentService extends AbstractPaymentService {
   constructor(opts: MockPaymentServiceOptions) {
@@ -46,6 +47,7 @@ export class MockPaymentService extends AbstractPaymentService {
   public async config(): Promise<ConfigResponse> {
     const config = getConfig();
     console.log('config');
+    log.info('config');
     console.log(config);
     return {
       clientKey: config.mockClientKey,
@@ -110,6 +112,7 @@ export class MockPaymentService extends AbstractPaymentService {
       }),
     })();
 console.log('status-handler');
+    log.info('status-handler');
     return handler.body;
   }
 
@@ -158,6 +161,7 @@ console.log('status-handler');
       },
     });
     console.log('capture-payment');
+    log.info('capture-payment');
     return { outcome: PaymentModificationStatus.APPROVED, pspReference: request.payment.interfaceId as string };
   }
 
@@ -268,6 +272,7 @@ console.log('status-handler');
       id: getCartIdFromContext(),
     });
     console.log('ctCart');
+    log.info('ctCart');
     console.log(ctCart);
     const ctPayment = await this.ctPaymentService.createPayment({
       amountPlanned: await this.ctCartService.getPaymentAmount({
@@ -331,6 +336,7 @@ console.log('status-handler');
     const TRANSACTION_STATE_SUCCESS: TransactionState = 'Success';
     const TRANSACTION_STATE_FAILURE: TransactionState = 'Failure';
 console.log('handle-transaction');
+    log.info('handle-transaction');
     const maxCentAmountIfSuccess = 10000;
 
     const ctCart = await this.ctCartService.getCart({ id: transactionDraft.cartId });
