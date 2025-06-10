@@ -264,8 +264,6 @@ export class MockPaymentService extends AbstractPaymentService {
     const ctCart = await this.ctCartService.getCart({
       id: getCartIdFromContext(),
     });
-    console.log('ctCart');
-    console.log(ctCart);
     const ctPayment = await this.ctPaymentService.createPayment({
       amountPlanned: await this.ctCartService.getPaymentAmount({
         cart: ctCart,
@@ -294,7 +292,6 @@ export class MockPaymentService extends AbstractPaymentService {
     });
 
     const pspReference = randomUUID().toString();
-console.log(pspReference );
     const updatedPayment = await this.ctPaymentService.updatePayment({
       id: ctPayment.id,
       pspReference: pspReference,
