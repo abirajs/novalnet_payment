@@ -260,8 +260,9 @@ export class MockPaymentService extends AbstractPaymentService {
    * @returns Promise with mocking data containing operation status and PSP reference
    */
   public async createPayment(request: CreatePaymentRequest): Promise<PaymentResponseSchemaDTO> {
+    console.log('createPayment-Triggered');
     this.validatePaymentMethod(request);
-
+    console.log('createPayment-Triggered-out');
     const ctCart = await this.ctCartService.getCart({
       id: getCartIdFromContext(),
     });
@@ -294,7 +295,7 @@ export class MockPaymentService extends AbstractPaymentService {
     });
 
     const pspReference = randomUUID().toString();
-
+console.log(pspReference );
     const updatedPayment = await this.ctPaymentService.updatePayment({
       id: ctPayment.id,
       pspReference: pspReference,
