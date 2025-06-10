@@ -45,6 +45,8 @@ export class MockPaymentService extends AbstractPaymentService {
    */
   public async config(): Promise<ConfigResponse> {
     const config = getConfig();
+    console.log('config');
+    console.log(config);
     return {
       clientKey: config.mockClientKey,
       environment: config.mockEnvironment,
@@ -107,7 +109,7 @@ export class MockPaymentService extends AbstractPaymentService {
         '@commercetools/connect-payments-sdk': packageJSON.dependencies['@commercetools/connect-payments-sdk'],
       }),
     })();
-
+console.log('status-handler');
     return handler.body;
   }
 
@@ -155,6 +157,7 @@ export class MockPaymentService extends AbstractPaymentService {
         state: 'Success',
       },
     });
+    console.log('capture-payment');
     return { outcome: PaymentModificationStatus.APPROVED, pspReference: request.payment.interfaceId as string };
   }
 
@@ -327,7 +330,7 @@ export class MockPaymentService extends AbstractPaymentService {
     const TRANSACTION_AUTHORIZATION_TYPE: TransactionType = 'Authorization';
     const TRANSACTION_STATE_SUCCESS: TransactionState = 'Success';
     const TRANSACTION_STATE_FAILURE: TransactionState = 'Failure';
-
+console.log('handle-transaction');
     const maxCentAmountIfSuccess = 10000;
 
     const ctCart = await this.ctCartService.getCart({ id: transactionDraft.cartId });
