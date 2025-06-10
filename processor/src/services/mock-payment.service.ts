@@ -260,13 +260,12 @@ export class MockPaymentService extends AbstractPaymentService {
    * @returns Promise with mocking data containing operation status and PSP reference
    */
   public async createPayment(request: CreatePaymentRequest): Promise<PaymentResponseSchemaDTO> {
-    console.log('createPayment-Triggered');
     this.validatePaymentMethod(request);
-    console.log('createPayment-Triggered-out');
     const ctCart = await this.ctCartService.getCart({
       id: getCartIdFromContext(),
     });
-
+    console.log('ctCart');
+    console.log(ctCart);
     const ctPayment = await this.ctPaymentService.createPayment({
       amountPlanned: await this.ctCartService.getPaymentAmount({
         cart: ctCart,
