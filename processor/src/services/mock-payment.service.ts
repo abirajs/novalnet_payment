@@ -127,13 +127,10 @@ export class MockPaymentService extends AbstractPaymentService {
           type: PaymentMethodType.CARD,
         },
         {
-          type: PaymentMethodType.CUSTOM_TEST_METHOD,
-        },
-        {
           type: PaymentMethodType.INVOICE,
         },
         {
-          type: PaymentMethodType.PURCHASE_ORDER,
+          type: PaymentMethodType.PREPAYMENT,
         },
       ],
     };
@@ -308,7 +305,7 @@ export class MockPaymentService extends AbstractPaymentService {
         interactionId: pspReference,
         state: this.convertPaymentResultCode(request.data.paymentOutcome),
       },
-      ...(request.data.paymentMethod.type === PaymentMethodType.PURCHASE_ORDER && {
+      ...(request.data.paymentMethod.type === PaymentMethodType.PREPAYMENT && {
         customFields: {
           type: {
             key: launchpadPurchaseOrderCustomType.key,
@@ -411,7 +408,7 @@ export class MockPaymentService extends AbstractPaymentService {
   private validatePaymentMethod(request: CreatePaymentRequest): void {
     const { paymentMethod } = request.data;
 
-    if (paymentMethod.type === PaymentMethodType.PURCHASE_ORDER && !paymentMethod.poNumber) {
+    if (paymentMethod.type === PaymentMethodType.PREPAYMENT && !paymentMethod.poNumber) {
       throw new ErrorRequiredField('poNumber');
     }
   }
