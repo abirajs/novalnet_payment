@@ -264,6 +264,8 @@ export class MockPaymentService extends AbstractPaymentService {
     const ctCart = await this.ctCartService.getCart({
       id: getCartIdFromContext(),
     });
+    console.log('ctCart');
+    console.log(ctCart);
     const ctPayment = await this.ctPaymentService.createPayment({
       amountPlanned: await this.ctCartService.getPaymentAmount({
         cart: ctCart,
