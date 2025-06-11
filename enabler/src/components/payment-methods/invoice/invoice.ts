@@ -49,42 +49,6 @@ export class Invoice extends BaseComponent {
     // here we would call the SDK to submit the payment
     this.sdk.init({ environment: this.environment });
     try {
-
-
-  // 🔐 Call Novalnet API server-side (no CORS issue)
-  const novalnetPayload = {
-    merchant: {
-      signature: '7ibc7ob5|tuJEH3gNbeWJfIHah||nbobljbnmdli0poys|doU3HJVoym7MQ44qf7cpn7pc',
-      tariff: '10004',
-    },
-    customer: {
-      first_name: 'Max',
-      last_name: 'Mustermann',
-      email: 'abiraj_s@novalnetsolutions.com',
-    },
-    transaction: {
-      test_mode: '1',
-      payment_type: 'PREPAYMENT',
-      amount: 10,
-      currency: 'EUR',
-    },
-  };
-
-  const novalnetResponse = await fetch('https://payport.novalnet.de/v2/payment', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'X-NN-Access-Key': 'YTg3ZmY2NzlhMmYzZTcxZDkxODFhNjdiNzU0MjEyMmM=',
-    },
-    body: JSON.stringify(novalnetPayload),
-  });
-console.log('handle-novalnetResponse');
-    console.log(novalnetResponse);
-
-
-
-      
       const requestData: PaymentRequestSchemaDTO = {
         paymentMethod: {
           type: this.paymentMethod,
