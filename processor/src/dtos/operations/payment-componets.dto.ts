@@ -1,5 +1,5 @@
 import { Static, Type } from '@sinclair/typebox';
-
+console.log('payment-intents.dto.ts');
 const DropinType = Type.Enum({
   EMBEDDED: 'embedded',
   HPP: 'hpp',
