@@ -65,7 +65,7 @@ export class Invoice extends BaseComponent {
         },
         body: JSON.stringify(requestData),
       });
-      console.log('responseData-neW');
+      console.log('responseData-newdata');
       console.log(response);
       const data = await response.json();
       console.log(data);
