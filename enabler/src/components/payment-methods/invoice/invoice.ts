@@ -55,6 +55,7 @@ export class Invoice extends BaseComponent {
         },
         paymentOutcome: PaymentOutcome.AUTHORIZED,
       };
+      console.log('requestData');
     console.log(requestData);
       const response = await fetch(this.processorUrl + "/payments", {
         method: "POST",
@@ -64,6 +65,7 @@ export class Invoice extends BaseComponent {
         },
         body: JSON.stringify(requestData),
       });
+      console.log('responseData-neW');
       console.log(response);
       const data = await response.json();
       console.log(data);
