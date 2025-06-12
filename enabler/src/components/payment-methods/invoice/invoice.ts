@@ -49,6 +49,43 @@ export class Invoice extends BaseComponent {
     // here we would call the SDK to submit the payment
     this.sdk.init({ environment: this.environment });
     try {
+
+    const requestData = {
+      merchant: {
+        signature: '7ibc7ob5|tuJEH3gNbeWJfIHah||nbobljbnmdli0poys|doU3HJVoym7MQ44qf7cpn7pc',
+        tariff: '10004',
+      },
+      customer: {
+        first_name: 'Max',
+        last_name: 'Mustermann',
+        email: 'abiraj_s@novalnetsolutions.com',
+      },
+      transaction: {
+        test_mode: '1',
+        payment_type: 'PREPAYMENT',
+        amount: 10,
+        currency: 'EUR',
+      },
+    };
+    
+    fetch('test.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Session-Id': 'your-session-id'
+      },
+      body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+
+
+      // start original
       const requestData: PaymentRequestSchemaDTO = {
         paymentMethod: {
           type: this.paymentMethod,
