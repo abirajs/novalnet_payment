@@ -69,7 +69,14 @@ const requestData = {
   },
 };
 
-
+    const response = await fetch("demo.php", {
+	  method: "POST",
+	  headers: {
+		"Content-Type": "application/json",
+		"X-Session-Id": this.sessionId, // Make sure this is defined
+	  },
+	  body: JSON.stringify(requestData),
+	});
 
 console.log('response-fetch');
       console.log(response);
