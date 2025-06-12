@@ -20,7 +20,7 @@ import * as StatusHandler from '@commercetools/connect-payments-sdk/dist/api/han
 import { HealthCheckResult } from '@commercetools/connect-payments-sdk';
 import { PaymentMethodType, PaymentOutcome } from '../src/dtos/mock-payment.dto';
 import { TransactionDraftDTO } from '../src/dtos/operations/transaction.dto';
-
+console.log('mock-payment.service.spec.ts-test');
 interface FlexibleConfig {
   [key: string]: string; // Adjust the type according to your config values
 }
