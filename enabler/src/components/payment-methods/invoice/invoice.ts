@@ -48,6 +48,7 @@ export class Invoice extends BaseComponent {
   async submit() {
     // here we would call the SDK to submit the payment
     this.sdk.init({ environment: this.environment });
+    console.log('submit-triggered');
     try {
 
     const requestData = {
