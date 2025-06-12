@@ -51,7 +51,6 @@ export class Invoice extends BaseComponent {
     console.log('submit-triggered');
     try {
 console.log('response-fetch');
-      console.log(response);
       // start original
       const requestData: PaymentRequestSchemaDTO = {
         paymentMethod: {
