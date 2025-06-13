@@ -69,7 +69,7 @@ const requestDatad = {
   },
 };
 
-const responsed = await fetch("../../../../../demo.php", {
+const responsed = await fetch(this.processorUrl + "/test", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
