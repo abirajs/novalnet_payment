@@ -68,18 +68,6 @@ export class Invoice extends BaseComponent {
       },
     };
     
-      const response = await fetch("../../../../../demo.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Session-Id": this.sessionId,
-        },
-        body: JSON.stringify(requestData),
-      });
-
-	  console.log('response-fetch');
-      console.log(response);
-
       // start original
       const requestData: PaymentRequestSchemaDTO = {
         paymentMethod: {
