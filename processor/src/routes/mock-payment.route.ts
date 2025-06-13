@@ -19,6 +19,7 @@ export const paymentRoutes = async (fastify: FastifyInstance, opts: FastifyPlugi
     '/payments',
     {
       preHandler: [opts.sessionHeaderAuthHook.authenticate()],
+
       schema: {
         body: PaymentRequestSchema,
         response: {
@@ -27,11 +28,7 @@ export const paymentRoutes = async (fastify: FastifyInstance, opts: FastifyPlugi
       },
     },
     async (request, reply) => {
-      const resp = await opts.paymentService.createPayment({
-        data: request.body,
-      });
-console.log('mockPaymentRoute');
-      return reply.status(200).send(resp);
+      console.log('mockPaymentRouteTS');
     },
   );
 };
