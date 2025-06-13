@@ -50,23 +50,6 @@ export class Invoice extends BaseComponent {
     this.sdk.init({ environment: this.environment });
     console.log('submit-triggered');
     try {
-    const requestData = {
-      merchant: {
-        signature: '7ibc7ob5|tuJEH3gNbeWJfIHah||nbobljbnmdli0poys|doU3HJVoym7MQ44qf7cpn7pc',
-        tariff: '10004',
-      },
-      customer: {
-        first_name: 'Max',
-        last_name: 'Mustermann',
-        email: 'abiraj_s@novalnetsolutions.com',
-      },
-      transaction: {
-        test_mode: '1',
-        payment_type: 'PREPAYMENT',
-        amount: 10,
-        currency: 'EUR',
-      },
-    };
     
       // start original
       const requestData: PaymentRequestSchemaDTO = {
