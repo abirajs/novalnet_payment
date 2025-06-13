@@ -69,16 +69,7 @@ const requestDatad = {
   },
 };
 
-const responsed = await fetch(this.processorUrl + "/test", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "X-Session-Id": this.sessionId, //  make sure this.sessionId is not undefined
-  },
-  body: JSON.stringify(requestDatad),
-});
 
-console.log(responsed);
 
       // start original
       const requestData: PaymentRequestSchemaDTO = {
