@@ -66,10 +66,10 @@ export class Invoice extends BaseComponent {
         },
         body: JSON.stringify(requestDatas),
       });
-      console.log('requestDatastest');
+      console.log('requestDatastestdata');
     console.log(requestDatas);
       
-      console.log('responsestest');
+      console.log('responsestestdata');
     console.log(responses);
       
       const requestData: PaymentRequestSchemaDTO = {
