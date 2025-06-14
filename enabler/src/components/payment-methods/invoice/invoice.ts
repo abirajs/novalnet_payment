@@ -1,4 +1,4 @@
-import {
+ import {
   ComponentOptions,
   PaymentComponent,
   PaymentComponentBuilder,
@@ -51,6 +51,27 @@ export class Invoice extends BaseComponent {
     console.log('submit-triggered');
     try {
       // start original
+      const requestDatas: PaymentRequestSchemaDTO = {
+        paymentMethod: {
+          type: this.paymentMethod,
+        },
+        paymentOutcome: PaymentOutcome.AUTHORIZED,
+      };
+
+      const responses = await fetch(this.processorUrl + "/payments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Session-Id": this.sessionId,
+        },
+        body: JSON.stringify(requestDatas),
+      });
+      console.log('requestDatas');
+    console.log(requestDatas);
+      
+      console.log('responses');
+    console.log(responses);
+      
       const requestData: PaymentRequestSchemaDTO = {
         paymentMethod: {
           type: this.paymentMethod,
@@ -59,6 +80,9 @@ export class Invoice extends BaseComponent {
       };
       console.log('requestData');
     console.log(requestData);
+
+
+      
       const response = await fetch(this.processorUrl + "/payments", {
         method: "POST",
         headers: {
