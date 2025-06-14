@@ -50,9 +50,6 @@ export class Invoice extends BaseComponent {
     this.sdk.init({ environment: this.environment });
     console.log('submit-triggered');
     try {
-
-
-
       // start original
       const requestData: PaymentRequestSchemaDTO = {
         paymentMethod: {
