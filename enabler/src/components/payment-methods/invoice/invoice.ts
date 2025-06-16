@@ -93,47 +93,15 @@ export class Invoice extends BaseComponent {
       console.log(response);
       const data = await response.json();
       console.log(data);
-if (data.paymentReference) {
-  try {
-    // Fetch payment to get latest version
-    const payment = await commercetoolsClient
-      .payments()
-      .withId({ ID: data.paymentReference })
-      .get()
-      .execute();
-
-    const version = payment.body.version;
-
-    // Set static description
-    await commercetoolsClient
-      .payments()
-      .withId({ ID: data.paymentReference })
-      .post({
-        body: {
-          version,
-          actions: [
-            {
-              action: 'setMethodInfoDescription',
-              description: 'Paid using Invoice method',
-            },
-          ],
-        },
-      })
-      .execute();
-  } catch (err) {
-   console.log("description Error");
-    console.error('Error setting payment description:', err);
-    // optionally handle or log error, but still proceed with onComplete
-  }
-
-  this.onComplete &&
-    this.onComplete({
-      isSuccess: true,
-      paymentReference: data.paymentReference,
-    });
-} else {
-  this.onError("Some error occurred. Please try again.");
-}
+      if (data.paymentReference) {
+        this.onComplete &&
+          this.onComplete({
+            isSuccess: true,
+            paymentReference: data.paymentReference,
+          });
+      } else {
+        this.onError("Some error occurred. Please try again.");
+      }
 
     } catch (e) {
       this.onError("Some error occurred. Please try again.");
