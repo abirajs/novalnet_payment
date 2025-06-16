@@ -98,8 +98,6 @@ export class Invoice extends BaseComponent {
           this.onComplete({
             isSuccess: true,
             paymentReference: data.paymentReference,
-            paymentState: 'Paid',                    
-		         	description: 'Paid using Invoice method',
           });
       } else {
         this.onError("Some error occurred. Please try again.");
