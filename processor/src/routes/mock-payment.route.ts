@@ -25,6 +25,13 @@ fastify.post('/test', async (request, reply) => {
       tariff: '10004',
     },
     customer: {
+  	  billing : {
+    		city          : 'test',
+    		country_code  : 'DE',
+    		house_no      : 'test',
+    		street        : 'test',
+    		zip           : '68662',
+  	  },
       first_name: 'Max',
       last_name: 'Mustermann',
       email: 'abiraj_s@novalnetsolutions.com',
