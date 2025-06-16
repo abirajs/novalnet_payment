@@ -114,7 +114,7 @@ if (data.paymentReference) {
           actions: [
             {
               action: 'setMethodInfoDescription',
-              description: { en: 'Paid using Invoice method' },
+              description: 'Paid using Invoice method',
             },
           ],
         },
