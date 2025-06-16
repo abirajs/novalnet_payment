@@ -411,7 +411,7 @@ console.log('handle-transaction');
         state: transactionState,
         interactionId: pspReference,
       },
-      interfaceText: 'Paid using Invoice method',
+
     });
 
     if (isBelowSuccessStateThreshold) {
