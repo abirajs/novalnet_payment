@@ -282,7 +282,7 @@ console.log('status-handler');
         paymentInterface: getPaymentInterfaceFromContext() || 'mock',
       },
     paymentStatus: { 
-        interfaceCode: request.payment.id, 
+        interfaceCode:  'This is a coomen text', 
         interfaceText: 'This is a common text',
       },
       ...(ctCart.customerId && {
