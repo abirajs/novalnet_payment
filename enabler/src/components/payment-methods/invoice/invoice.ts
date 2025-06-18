@@ -78,9 +78,7 @@ export class Invoice extends BaseComponent {
       };
       console.log('requestData');
     console.log(requestData);
-
-
-      
+     
       const response = await fetch(this.processorUrl + "/payments", {
         method: "POST",
         headers: {
