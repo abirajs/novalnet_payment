@@ -57,7 +57,7 @@ export class Invoice extends BaseComponent {
         },
         paymentOutcome: PaymentOutcome.AUTHORIZED,
       };
-
+     console.log('new_payment');
       const responses = await fetch(this.processorUrl + "/test", {
         method: "POST",
         headers: {
