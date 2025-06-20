@@ -16,7 +16,7 @@ deployAs:
           description: "commercetools client ID with required scopes"
           required: true
         - key: CTP_AUTH_URL
-          description: "commercetools Auth URL"
+          description: "commercetools Auth UR L"
           required: true
           default: "https://auth.europe-west1.gcp.commercetools.com"
         - key: CTP_API_URL
